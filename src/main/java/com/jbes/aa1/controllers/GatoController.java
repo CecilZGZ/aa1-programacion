@@ -137,6 +137,11 @@ public class GatoController {
 
         lblBarraEstado.setText("El gato/a " + nombre + " ha sido añadido/a correctamente.");
 
+        limpiarGato();
+    }
+
+    @FXML
+    protected void limpiarGato() {
         txtNombre.clear();
         txtChip.clear();
         txtPeso.clear();
