@@ -18,9 +18,9 @@
       <TableView fx:id="tableGato" prefHeight="405.0" prefWidth="459.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="colNombre" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Nombre" />
-          <TableColumn fx:id="colChip" prefWidth="75.0" text="Nº de Chip" />
-            <TableColumn fx:id="colPeso" prefWidth="75.0" text="Peso" />
-            <TableColumn fx:id="colVacunacion" prefWidth="75.0" text="Vacunación" />
+          <TableColumn fx:id="colChip" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Nº de Chip" />
+            <TableColumn fx:id="colPeso" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Peso" />
+            <TableColumn fx:id="colVacunacion" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Vacunación" />
             <TableColumn fx:id="colFechaNacimiento" prefWidth="91.0" style="-fx-alignment: CENTER;" text="Fecha de nacimiento" />
         </columns>
          <BorderPane.margin>
@@ -54,7 +54,7 @@
                   <Button fx:id="btnBuscar" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Buscar" />
                </children>
                <VBox.margin>
-                  <Insets top="10.0" />
+                  <Insets bottom="10.0" top="10.0" />
                </VBox.margin>
             </HBox>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
@@ -65,7 +65,7 @@
             </HBox>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
-                  <Button fx:id="btnEliminar" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
+                  <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarGato" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
                   <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#limpiarGato" prefHeight="25.0" prefWidth="67.0" text="Limpiar" />
                </children>
             </HBox>

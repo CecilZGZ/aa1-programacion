@@ -149,6 +149,16 @@ public class GatoController {
         dpFechaNacimiento.setValue(null);
     }
 
+    @FXML
+    protected void eliminarGato() {
+        Gato gatoBorrar = tableGato.getSelectionModel().getSelectedItem();
+
+        if (gatoBorrar != null) {
+            tableGato.getItems().remove(gatoBorrar);
+            limpiarGato();
+        }
+    }
+
 
 
 }
