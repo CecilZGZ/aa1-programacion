@@ -15,7 +15,7 @@
 
 <BorderPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jbes.aa1.controllers.GatoController">
    <center>
-      <TableView fx:id="tableGato" prefHeight="405.0" prefWidth="459.0" BorderPane.alignment="CENTER">
+      <TableView fx:id="tableGato" onMouseClicked="#cargarGato" prefHeight="405.0" prefWidth="459.0" BorderPane.alignment="CENTER">
         <columns>
           <TableColumn fx:id="colNombre" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Nombre" />
           <TableColumn fx:id="colChip" prefWidth="75.0" style="-fx-alignment: CENTER;" text="Nº de Chip" />
@@ -51,7 +51,7 @@
             <DatePicker fx:id="dpFechaNacimiento" />
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
-                  <Button fx:id="btnBuscar" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Buscar" />
+                  <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarGato" prefHeight="25.0" prefWidth="67.0" text="Buscar" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
@@ -60,7 +60,7 @@
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnAnadir" mnemonicParsing="false" onAction="#anadirGato" prefHeight="25.0" prefWidth="67.0" text="Añadir" />
-                  <Button fx:id="btnModificar" mnemonicParsing="false" prefHeight="25.0" prefWidth="67.0" text="Modificar" />
+                  <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#modificarGato" prefHeight="25.0" prefWidth="67.0" text="Modificar" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
