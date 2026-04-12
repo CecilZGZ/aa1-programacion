@@ -14,8 +14,6 @@ import javafx.util.StringConverter;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 public class GatoController implements Initializable {
@@ -202,16 +200,6 @@ public class GatoController implements Initializable {
     }
 
     @FXML
-    protected void eliminarGato() {
-        Gato gatoBorrar = tableGato.getSelectionModel().getSelectedItem();
-
-        if (gatoBorrar != null) {
-            tableGato.getItems().remove(gatoBorrar);
-            limpiarGato();
-        }
-    }
-
-    @FXML
     protected void cargarGato() {
         Gato gatoCargar = tableGato.getSelectionModel().getSelectedItem();
 
@@ -221,6 +209,16 @@ public class GatoController implements Initializable {
             txtPeso.setText(String.valueOf(gatoCargar.getPeso()));
             cbVacunacion.setValue(gatoCargar.isVacunado() ? "Al día" : "Pendiente");
             dpFechaNacimiento.setValue(gatoCargar.getFechaNacimiento());
+        }
+    }
+
+    @FXML
+    protected void eliminarGato() {
+        Gato gatoCargar = tableGato.getSelectionModel().getSelectedItem();
+
+        if (gatoCargar != null) {
+            listaGatos.remove(gatoCargar);
+            limpiarGato();
         }
     }
 
