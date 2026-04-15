@@ -32,23 +32,28 @@
       </TableView>
    </center>
    <left>
-      <VBox prefHeight="387.0" prefWidth="188.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="387.0" prefWidth="188.0" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-alignment: CENTER;" text="Trámites" underline="true">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label text="Tipo" />
+            <Label text="Tipo*" />
             <TextField fx:id="txtTipo" />
             <Label text="Veterinaria" />
             <TextField fx:id="txtVeterinaria" />
             <Label text="Coste" />
             <TextField fx:id="txtCoste" />
-            <Label text="¿Cita fijada?" />
+            <Label text="¿Cita fijada?*" />
             <ChoiceBox fx:id="cbCitaFijada" prefWidth="150.0" />
             <Label text="Fecha de la cita" />
             <DatePicker fx:id="dpFechaCita" />
+            <Label minHeight="-Infinity" text="Campos(*) obligatorios al añadir." wrapText="true">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarTramite" prefHeight="25.0" prefWidth="67.0" text="Buscar" />

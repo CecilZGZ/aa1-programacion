@@ -32,23 +32,28 @@
       </TableView>
    </center>
    <left>
-      <VBox prefHeight="387.0" prefWidth="188.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="387.0" prefWidth="188.0" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" style="-fx-alignment: CENTER;" text="Casas de Acogida" underline="true">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label text="Dueño" />
+            <Label text="Dueño*" />
             <TextField fx:id="txtDueno" />
             <Label text="Nº de gatos" />
             <TextField fx:id="txtGatos" />
             <Label text="Valoración" />
             <TextField fx:id="txtValoracion" />
-            <Label text="¿Hueco disponible?" />
+            <Label text="¿Hueco disponible?*" />
             <ChoiceBox fx:id="cbHueco" prefWidth="150.0" />
             <Label text="Fecha de inscripción" />
             <DatePicker fx:id="dpFechaInscripcion" />
+            <Label minHeight="-Infinity" text="Campos(*) obligatorios al añadir." wrapText="true">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarCasa" prefHeight="25.0" prefWidth="67.0" text="Buscar" />

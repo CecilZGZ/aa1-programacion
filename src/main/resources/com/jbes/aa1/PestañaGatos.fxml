@@ -32,16 +32,16 @@
       </TableView>
    </center>
    <left>
-      <VBox prefHeight="387.0" prefWidth="188.0" spacing="10.0" BorderPane.alignment="CENTER">
+      <VBox prefHeight="387.0" prefWidth="188.0" spacing="8.0" BorderPane.alignment="CENTER">
          <children>
             <Label alignment="CENTER" contentDisplay="CENTER" text="Datos del Gato" underline="true">
                <font>
                   <Font name="System Bold" size="18.0" />
                </font>
             </Label>
-            <Label text="Nombre" />
+            <Label text="Nombre*" />
             <TextField fx:id="txtNombre" />
-            <Label text="Nº de Chip" />
+            <Label text="Nº de Chip*" />
             <TextField fx:id="txtChip" />
             <Label text="Peso" />
             <TextField fx:id="txtPeso" />
@@ -49,6 +49,11 @@
             <ChoiceBox fx:id="cbVacunacion" prefWidth="150.0" />
             <Label text="Fecha de nacimiento" />
             <DatePicker fx:id="dpFechaNacimiento" />
+            <Label alignment="CENTER" minHeight="-Infinity" prefWidth="173.0" text="Campos(*) obligatorios al añadir." wrapText="true">
+               <font>
+                  <Font size="10.0" />
+               </font>
+            </Label>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarGato" prefHeight="25.0" prefWidth="67.0" text="Buscar" />

@@ -66,13 +66,13 @@ public class CasaController implements Initializable {
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbHueco.getItems().addAll("Sí", "No");
-        cbHueco.setValue("Estado actual");
+
 
         colDueno.setCellValueFactory(new PropertyValueFactory<>("dueno"));
         colGatos.setCellValueFactory(new PropertyValueFactory<>("numeroGatos"));
         colValoracion.setCellValueFactory(new PropertyValueFactory<>("valoracion"));
         colHueco.setCellValueFactory(new PropertyValueFactory<>("huecoDisponible"));
-        colFechaInscripcion.setCellValueFactory(new PropertyValueFactory<>("fechaIncripcion"));
+        colFechaInscripcion.setCellValueFactory(new PropertyValueFactory<>("fechaInscripcion"));
 
         listaCasasFiltrada = new FilteredList<>(listaCasas, Predicate -> true);
         tableCasa.setItems(listaCasasFiltrada);
@@ -130,7 +130,7 @@ public class CasaController implements Initializable {
         String buscarGatos = txtGatos.getText();
         String buscarValoracion = txtValoracion.getText();
         String buscarHueco = cbHueco.getValue();
-        LocalDate buscarFechaIncripcion = dpFechaInscripcion.getValue();
+        LocalDate buscarFechaInscripcion = dpFechaInscripcion.getValue();
 
         listaCasasFiltrada.setPredicate(casa -> {
             if (!buscarDueno.isEmpty() && !casa.getDueno().toLowerCase().contains(buscarDueno)) {
@@ -146,48 +146,58 @@ public class CasaController implements Initializable {
             }
 
             if (buscarHueco != null && !buscarHueco.isEmpty()) {
-                if (buscarHueco.equals("Al día") && !casa.isHuecoDisponible()) {
+                if (buscarHueco.equals("Sí") && !casa.isHuecoDisponible()) {
                     return false;
                 }
 
-                if (buscarHueco.equals("Pendiente") && casa.isHuecoDisponible()) {
+                if (buscarHueco.equals("No") && casa.isHuecoDisponible()) {
                     return false;
                 }
             }
 
-            if (buscarFechaIncripcion != null) {
+            if (buscarFechaInscripcion != null) {
                 if (casa.getFechaInscripcion() == null) {
                     return false;
                 }
 
-                if (!casa.getFechaInscripcion().equals(buscarFechaIncripcion)) {
+                if (!casa.getFechaInscripcion().equals(buscarFechaInscripcion)) {
                     return false;
                 }
             }
             return true;
         });
+
+        lblBarraEstado.setText("Búsqueda completada.");
     }
 
 
     @FXML
     protected void anadirCasa() {
-        String dueno = txtDueno.getText();
-        int numeroGatos = Integer.parseInt(txtGatos.getText());
-        float valoracion = Float.parseFloat(txtValoracion.getText().replace(",","."));
-        String huecos = cbHueco.getValue();
-        boolean huecoDisponible = false;
-        if (huecos.equals("Sí")) {
-            huecoDisponible = true;
+        if(validadorCamposObligatorios()) {
+            String dueno = txtDueno.getText();
+            int numeroGatos = 0;
+            if (!txtGatos.getText().trim().isEmpty()) {
+                Integer.parseInt(txtGatos.getText());
+            }
+            float valoracion = 0;
+            if (!txtValoracion.getText().trim().isEmpty()) {
+                Float.parseFloat(txtValoracion.getText().replace(",", "."));
+            }
+            String huecos = cbHueco.getValue();
+            boolean huecoDisponible = false;
+            if (huecos.equals("Sí")) {
+                huecoDisponible = true;
+            }
+            LocalDate fechaInscripcion = dpFechaInscripcion.getValue();
+
+            Casa casa = new Casa(dueno, numeroGatos, valoracion, huecoDisponible, fechaInscripcion);
+
+            listaCasas.add(casa);
+
+            lblBarraEstado.setText("La casa de " + dueno + " ha sido añadida correctamente.");
+
+            limpiarCasa();
         }
-        LocalDate fechaInscripcion = dpFechaInscripcion.getValue();
-
-        Casa casa = new Casa(dueno, numeroGatos, valoracion, huecoDisponible, fechaInscripcion);
-
-        listaCasas.add(casa);
-
-        lblBarraEstado.setText("La casa de " + dueno + " ha sido añadida correctamente.");
-
-        limpiarCasa();
     }
 
     @FXML
@@ -210,6 +220,8 @@ public class CasaController implements Initializable {
             cbHueco.setValue(casaCargar.isHuecoDisponible() ? "Sí" : "No");
             dpFechaInscripcion.setValue(casaCargar.getFechaInscripcion());
         }
+
+        lblBarraEstado.setText("La casa de " + (casaCargar.getDueno()) + " ha sido seleccionada.");
     }
 
     @FXML
@@ -220,6 +232,8 @@ public class CasaController implements Initializable {
             listaCasas.remove(casaCargar);
             limpiarCasa();
         }
+
+        lblBarraEstado.setText("La casa de " + (casaCargar.getDueno()) + " ha sido eliminada de la lista.");
     }
 
     @FXML
@@ -235,6 +249,28 @@ public class CasaController implements Initializable {
 
             tableCasa.refresh();
             limpiarCasa();
+        }
+
+        lblBarraEstado.setText("Los datos de la casa de " + (casaCargar.getDueno()) + " han sido modificados.");
+    }
+
+    @FXML
+    protected boolean validadorCamposObligatorios() {
+        String mensajeError ="";
+
+        if (txtDueno.getText() == null || txtDueno.getText().trim().isEmpty()) {
+            mensajeError += "Es obligatorio indicar el dueño de la casa. ";
+        }
+
+        if (cbHueco.getValue() == null) {
+            mensajeError += "Hay que seleccionar si hay hueco disponible.";
+        }
+
+        if (mensajeError.isEmpty()) {
+            return true;
+        } else {
+            lblBarraEstado.setText(mensajeError);
+            return false;
         }
     }
 

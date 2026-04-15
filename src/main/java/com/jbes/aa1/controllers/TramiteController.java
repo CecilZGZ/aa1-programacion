@@ -66,7 +66,6 @@ public class TramiteController implements Initializable {
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbCitaFijada.getItems().addAll("Sí", "No");
-        cbCitaFijada.setValue("Estado actual");
 
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
         colVeterinaria.setCellValueFactory(new PropertyValueFactory<>("veterinaria"));
@@ -166,28 +165,35 @@ public class TramiteController implements Initializable {
             }
             return true;
         });
+
+        lblBarraEstado.setText("Búsqueda completada.");
     }
 
 
     @FXML
     protected void anadirTramite() {
-        String tipo = txtTipo.getText();
-        String veterinaria = txtVeterinaria.getText();
-        float coste = Float.parseFloat(txtCoste.getText().replace(",","."));
-        String citaFijada = cbCitaFijada.getValue();
-        boolean tieneCita = false;
-        if (citaFijada.equals("Sí")) {
-            tieneCita = true;
+        if (validadorCamposObligatorios()) {
+            String tipo = txtTipo.getText();
+            String veterinaria = txtVeterinaria.getText();
+            float coste = 0;
+            if (!txtCoste.getText().trim().isEmpty()) {
+                Float.parseFloat(txtCoste.getText().replace(",", "."));
+            }
+            String citaFijada = cbCitaFijada.getValue();
+            boolean tieneCita = false;
+            if (citaFijada.equals("Sí")) {
+                tieneCita = true;
+            }
+            LocalDate fechaCita = dpFechaCita.getValue();
+
+            Tramite tramite = new Tramite(tipo, veterinaria, coste, tieneCita, fechaCita);
+
+            listaTramites.add(tramite);
+
+            lblBarraEstado.setText("El trámite " + tipo + " ha sido añadido correctamente.");
+
+            limpiarTramite();
         }
-        LocalDate fechaCita = dpFechaCita.getValue();
-
-        Tramite tramite = new Tramite(tipo, veterinaria, coste, tieneCita, fechaCita);
-
-        listaTramites.add(tramite);
-
-        lblBarraEstado.setText("El trámite " + tipo + " ha sido añadido correctamente.");
-
-        limpiarTramite();
     }
 
     @FXML
@@ -210,6 +216,8 @@ public class TramiteController implements Initializable {
             cbCitaFijada.setValue(tramiteCargar.isTieneCita() ? "Sí" : "No");
             dpFechaCita.setValue(tramiteCargar.getFechaCita());
         }
+
+        lblBarraEstado.setText((tramiteCargar.getTipo()) + " ha sido seleccionado/a");
     }
 
     @FXML
@@ -220,6 +228,8 @@ public class TramiteController implements Initializable {
             listaTramites.remove(tramiteCargar);
             limpiarTramite();
         }
+
+        lblBarraEstado.setText((tramiteCargar.getTipo()) + " ha sido eliminado/a de la lista.");
     }
 
     @FXML
@@ -235,6 +245,25 @@ public class TramiteController implements Initializable {
 
             tableTramite.refresh();
             limpiarTramite();
+        }
+
+        lblBarraEstado.setText("El trámite " + (tramiteCargar.getTipo()) + " ha sido modificado.");
+    }
+
+    @FXML
+    protected boolean validadorCamposObligatorios() {
+        String mensajeError = "";
+        if (txtTipo.getText() == null || txtTipo.getText().trim().isEmpty()) {
+            mensajeError += "Es obligatorio introducir un trámite. ";
+        }
+        if (cbCitaFijada.getValue() == null) {
+            mensajeError += "Es obligatorio indicar si existe una cita fijada.";
+        }
+        if (mensajeError.isEmpty()) {
+            return true;
+        } else {
+            lblBarraEstado.setText(mensajeError);
+            return false;
         }
     }
 

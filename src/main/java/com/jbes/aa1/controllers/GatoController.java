@@ -15,6 +15,7 @@ import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ResourceBundle;
+import java.util.concurrent.LinkedBlockingDeque;
 
 public class GatoController implements Initializable {
 
@@ -66,7 +67,6 @@ public class GatoController implements Initializable {
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
         cbVacunacion.getItems().addAll("Al día", "Pendiente");
-        cbVacunacion.setValue("Estado actual");
 
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
         colChip.setCellValueFactory(new PropertyValueFactory<>("chip"));
@@ -166,28 +166,36 @@ public class GatoController implements Initializable {
             }
             return true;
         });
+
+        lblBarraEstado.setText("Búsqueda completada.");
     }
 
 
     @FXML
     protected void anadirGato() {
-        String nombre = txtNombre.getText();
-        int chip = Integer.parseInt(txtChip.getText());
-        float peso = Float.parseFloat(txtPeso.getText().replace(",","."));
-        String vacunacion = cbVacunacion.getValue();
-        boolean vacunado = false;
-        if (vacunacion.equals("Al día")) {
-            vacunado = true;
+        if (validadorCamposObligatorios()) {
+            String nombre = txtNombre.getText();
+            int chip = Integer.parseInt(txtChip.getText());
+
+            float peso = 0;
+            if (!txtPeso.getText().trim().isEmpty()) {
+                Float.parseFloat(txtPeso.getText().replace(",","."));
+            }
+            String vacunacion = cbVacunacion.getValue();
+            boolean vacunado = false;
+            if (vacunacion.equals("Al día")) {
+                vacunado = true;
+            }
+            LocalDate fechaNacimiento = dpFechaNacimiento.getValue();
+
+            Gato gato = new Gato(nombre, chip, peso, vacunado, fechaNacimiento);
+
+            listaGatos.add(gato);
+
+            lblBarraEstado.setText("El gato/a " + nombre + " ha sido añadido/a correctamente.");
+
+            limpiarGato();
         }
-        LocalDate fechaNacimiento = dpFechaNacimiento.getValue();
-
-        Gato gato = new Gato(nombre, chip, peso, vacunado, fechaNacimiento);
-
-        listaGatos.add(gato);
-
-        lblBarraEstado.setText("El gato/a " + nombre + " ha sido añadido/a correctamente.");
-
-        limpiarGato();
     }
 
     @FXML
@@ -197,6 +205,7 @@ public class GatoController implements Initializable {
         txtPeso.clear();
         cbVacunacion.setValue(null);
         dpFechaNacimiento.setValue(null);
+
     }
 
     @FXML
@@ -210,6 +219,8 @@ public class GatoController implements Initializable {
             cbVacunacion.setValue(gatoCargar.isVacunado() ? "Al día" : "Pendiente");
             dpFechaNacimiento.setValue(gatoCargar.getFechaNacimiento());
         }
+
+        lblBarraEstado.setText((gatoCargar.getNombre()) + " ha sido seleccionado/a");
     }
 
     @FXML
@@ -220,6 +231,8 @@ public class GatoController implements Initializable {
             listaGatos.remove(gatoCargar);
             limpiarGato();
         }
+
+        lblBarraEstado.setText((gatoCargar.getNombre()) + " ha sido eliminado/a de la lista.");
     }
 
     @FXML
@@ -235,6 +248,30 @@ public class GatoController implements Initializable {
 
             tableGato.refresh();
             limpiarGato();
+        }
+
+        lblBarraEstado.setText("Los datos de " + (gatoCargar.getNombre()) + " han sido modificados.");
+    }
+
+    @FXML
+    protected boolean validadorCamposObligatorios() {
+        String mensajeError = "";
+
+        if (txtNombre.getText() == null || txtNombre.getText().trim().isEmpty()) {
+            mensajeError += "Es obligatorio introducir un nombre. ";
+        }
+
+        try {
+            Integer.parseInt(txtChip.getText());
+        } catch (NumberFormatException e) {
+            mensajeError += "El número de chip debe ser un número entero válido.";
+        }
+
+        if (mensajeError.isEmpty()) {
+            return true;
+        } else {
+            lblBarraEstado.setText(mensajeError);
+            return false;
         }
     }
 
