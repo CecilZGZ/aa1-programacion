@@ -1,5 +1,6 @@
 package com.jbes.aa1.controllers;
 
+import com.jbes.aa1.model.Casa;
 import com.jbes.aa1.model.Gato;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -74,6 +75,30 @@ public class GatoController implements Initializable {
         colVacunacion.setCellValueFactory(new PropertyValueFactory<>("vacunado"));
         colFechaNacimiento.setCellValueFactory(new PropertyValueFactory<>("fechaNacimiento"));
 
+        colChip.setCellFactory(col -> new TableCell<Gato, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item == -1) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+
+        colPeso.setCellFactory(col -> new TableCell<Gato, Float>() {
+            @Override
+            protected void updateItem(Float item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item == -1.0f) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+
         listaGatosFiltrada = new FilteredList<>(listaGatos, Predicate -> true);
         tableGato.setItems(listaGatosFiltrada);
 
@@ -146,11 +171,11 @@ public class GatoController implements Initializable {
             }
 
             if (buscarVacunado != null && !buscarVacunado.isEmpty()) {
-                if (buscarVacunado.equals("Al día") && !gato.isVacunado()) {
+                if (buscarVacunado.equals("Al día") && !gato.getVacunado()) {
                     return false;
                 }
 
-                if (buscarVacunado.equals("Pendiente") && gato.isVacunado()) {
+                if (buscarVacunado.equals("Pendiente") && gato.getVacunado()) {
                     return false;
                 }
             }
@@ -175,16 +200,19 @@ public class GatoController implements Initializable {
     protected void anadirGato() {
         if (validadorCamposObligatorios()) {
             String nombre = txtNombre.getText();
-            int chip = Integer.parseInt(txtChip.getText());
 
-            float peso = 0;
+            int chip = -1;
+            if (!txtChip.getText().trim().isEmpty()) {
+                chip = Integer.parseInt(txtChip.getText());
+            }
+            float peso = -1.0f;
             if (!txtPeso.getText().trim().isEmpty()) {
-                Float.parseFloat(txtPeso.getText().replace(",","."));
+                peso = Float.parseFloat(txtPeso.getText().replace(",","."));
             }
             String vacunacion = cbVacunacion.getValue();
-            boolean vacunado = false;
-            if (vacunacion.equals("Al día")) {
-                vacunado = true;
+            Boolean vacunado = null;
+            if (vacunacion != null) {
+                vacunado = vacunacion.equals("Al día");
             }
             LocalDate fechaNacimiento = dpFechaNacimiento.getValue();
 
@@ -214,9 +242,14 @@ public class GatoController implements Initializable {
 
         if (gatoCargar != null) {
             txtNombre.setText(gatoCargar.getNombre());
-            txtChip.setText(String.valueOf(gatoCargar.getChip()));
-            txtPeso.setText(String.valueOf(gatoCargar.getPeso()));
-            cbVacunacion.setValue(gatoCargar.isVacunado() ? "Al día" : "Pendiente");
+            txtChip.setText(gatoCargar.getChip() == -1 ? "" : String.valueOf(gatoCargar.getChip()));
+            txtPeso.setText(gatoCargar.getPeso() == -1.0f ? "" : String.valueOf(gatoCargar.getPeso()));
+            cbVacunacion.setValue(gatoCargar.getVacunado() ? "Al día" : "Pendiente");
+            if (gatoCargar.getVacunado() == null) {
+                cbVacunacion.setValue(null);
+            } else {
+                cbVacunacion.setValue(gatoCargar.getVacunado() ? "Al día" : "Pendiente");
+            }
             dpFechaNacimiento.setValue(gatoCargar.getFechaNacimiento());
         }
 
@@ -239,18 +272,31 @@ public class GatoController implements Initializable {
     protected void modificarGato() {
         Gato gatoCargar = tableGato.getSelectionModel().getSelectedItem();
 
-        if (gatoCargar != null) {
-            gatoCargar.setNombre(txtNombre.getText());
-            gatoCargar.setChip(Integer.parseInt(txtChip.getText()));
-            gatoCargar.setPeso(Float.parseFloat(txtPeso.getText().replace(",",".")));
-            gatoCargar.setVacunado("Al día".equals(cbVacunacion.getValue()));
-            gatoCargar.setFechaNacimiento(dpFechaNacimiento.getValue());
+        if( validadorCamposObligatorios()) {
+            if (gatoCargar != null) {
 
-            tableGato.refresh();
-            limpiarGato();
+                int chip = -1;
+                if (!txtChip.getText().trim().isEmpty()) {
+                    chip = Integer.parseInt(txtChip.getText());
+                }
+                float peso = -1.0f;
+                if (!txtPeso.getText().trim().isEmpty()) {
+                    peso = Float.parseFloat(txtPeso.getText());
+                }
+                gatoCargar.setNombre(txtNombre.getText());
+                gatoCargar.setChip(chip);
+                gatoCargar.setPeso(peso);
+                gatoCargar.setVacunado(cbVacunacion.getValue() == null ? null : "Al día".equals(cbVacunacion.getValue()));
+                gatoCargar.setFechaNacimiento(dpFechaNacimiento.getValue());
+
+                tableGato.refresh();
+                limpiarGato();
+
+                lblBarraEstado.setText("Los datos de " + (gatoCargar.getNombre()) + " han sido modificados.");
+            }
         }
 
-        lblBarraEstado.setText("Los datos de " + (gatoCargar.getNombre()) + " han sido modificados.");
+
     }
 
     @FXML

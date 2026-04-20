@@ -74,6 +74,30 @@ public class CasaController implements Initializable {
         colHueco.setCellValueFactory(new PropertyValueFactory<>("huecoDisponible"));
         colFechaInscripcion.setCellValueFactory(new PropertyValueFactory<>("fechaInscripcion"));
 
+        colGatos.setCellFactory(col -> new TableCell<Casa, Integer>() {
+            @Override
+            protected void updateItem(Integer item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item == -1) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+
+        colValoracion.setCellFactory(col -> new TableCell<Casa, Float>() {
+            @Override
+            protected void updateItem(Float item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item == -1.0f) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
+
         listaCasasFiltrada = new FilteredList<>(listaCasas, Predicate -> true);
         tableCasa.setItems(listaCasasFiltrada);
 
@@ -175,11 +199,11 @@ public class CasaController implements Initializable {
     protected void anadirCasa() {
         if(validadorCamposObligatorios()) {
             String dueno = txtDueno.getText();
-            int numeroGatos = 0;
+            int numeroGatos = -1;
             if (!txtGatos.getText().trim().isEmpty()) {
                 Integer.parseInt(txtGatos.getText());
             }
-            float valoracion = 0;
+            float valoracion = -1.0f;
             if (!txtValoracion.getText().trim().isEmpty()) {
                 Float.parseFloat(txtValoracion.getText().replace(",", "."));
             }
@@ -215,8 +239,8 @@ public class CasaController implements Initializable {
 
         if (casaCargar != null) {
             txtDueno.setText(casaCargar.getDueno());
-            txtGatos.setText(String.valueOf(casaCargar.getNumeroGatos()));
-            txtValoracion.setText(String.valueOf(casaCargar.getValoracion()));
+            txtGatos.setText(casaCargar.getNumeroGatos() == -1 ? "" : String.valueOf(casaCargar.getNumeroGatos()));
+            txtValoracion.setText(casaCargar.getValoracion() == -1.0f ? "" : String.valueOf(casaCargar.getValoracion()));
             cbHueco.setValue(casaCargar.isHuecoDisponible() ? "Sí" : "No");
             dpFechaInscripcion.setValue(casaCargar.getFechaInscripcion());
         }
@@ -240,32 +264,39 @@ public class CasaController implements Initializable {
     protected void modificarCasa() {
         Casa casaCargar = tableCasa.getSelectionModel().getSelectedItem();
 
-        if (casaCargar != null) {
-            casaCargar.setDueno(txtDueno.getText());
-            casaCargar.setNumeroGatos(Integer.parseInt(txtGatos.getText()));
-            casaCargar.setValoracion(Float.parseFloat(txtValoracion.getText().replace(",",".")));
-            casaCargar.setHuecoDisponible("Al día".equals(cbHueco.getValue()));
-            casaCargar.setFechaInscripcion(dpFechaInscripcion.getValue());
+        if(validadorCamposObligatorios()) {
+            if (casaCargar != null) {
+                int numeroGatos = -1;
+                if (!txtGatos.getText().trim().isEmpty()) {
+                    numeroGatos = Integer.parseInt(txtGatos.getText());
+                }
+                float valoracion = -1.0f;
+                if (!txtValoracion.getText().trim().isEmpty()) {
+                    valoracion = Float.parseFloat(txtValoracion.getText().replace(",", "."));
+                }
+                casaCargar.setDueno(txtDueno.getText());
+                casaCargar.setNumeroGatos((numeroGatos));
+                casaCargar.setValoracion(valoracion);
+                casaCargar.setHuecoDisponible("Sí".equals(cbHueco.getValue()));
+                casaCargar.setFechaInscripcion(dpFechaInscripcion.getValue());
 
-            tableCasa.refresh();
-            limpiarCasa();
+                tableCasa.refresh();
+                limpiarCasa();
+
+                lblBarraEstado.setText("Los datos de la casa de " + (casaCargar.getDueno()) + " han sido modificados.");
+            }
         }
-
-        lblBarraEstado.setText("Los datos de la casa de " + (casaCargar.getDueno()) + " han sido modificados.");
     }
 
     @FXML
     protected boolean validadorCamposObligatorios() {
-        String mensajeError ="";
-
+        String mensajeError = "";
         if (txtDueno.getText() == null || txtDueno.getText().trim().isEmpty()) {
             mensajeError += "Es obligatorio indicar el dueño de la casa. ";
         }
-
         if (cbHueco.getValue() == null) {
             mensajeError += "Hay que seleccionar si hay hueco disponible.";
         }
-
         if (mensajeError.isEmpty()) {
             return true;
         } else {
@@ -273,6 +304,7 @@ public class CasaController implements Initializable {
             return false;
         }
     }
+
 
 
 
