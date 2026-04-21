@@ -2,12 +2,13 @@ package com.jbes.aa1.model;
 
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Gato {
+public class Gato implements Serializable {
     private String nombre; //Obligatorio
     private int chip; //Obligatorio
     private float peso;
-    private boolean vacunado;
+    private Boolean vacunado;
     private LocalDate fechaNacimiento;
 
     public Gato(String nombre, int chip) {
@@ -15,7 +16,7 @@ public class Gato {
         this.chip = chip;
     }
 
-    public Gato(String nombre, int chip, float peso, boolean vacunado, LocalDate fechaNacimiento) {
+    public Gato(String nombre, int chip, float peso, Boolean vacunado, LocalDate fechaNacimiento) {
         this.nombre = nombre;
         this.chip = chip;
         this.peso = peso;
@@ -47,11 +48,11 @@ public class Gato {
         this.peso = peso;
     }
 
-    public boolean isVacunado() {
+    public Boolean getVacunado() {
         return vacunado;
     }
 
-    public void setVacunado(boolean vacunado) {
+    public void setVacunado(Boolean vacunado) {
         this.vacunado = vacunado;
     }
 

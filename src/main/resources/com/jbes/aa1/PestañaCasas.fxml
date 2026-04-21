@@ -65,12 +65,12 @@
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnAnadir" mnemonicParsing="false" onAction="#anadirCasa" prefHeight="25.0" prefWidth="67.0" text="Añadir" />
-                  <Button fx:id="btnModificar" mnemonicParsing="false" onAction="#modificarCasa" prefHeight="25.0" prefWidth="67.0" text="Modificar" />
+                  <Button fx:id="btnModificar" disable="true" mnemonicParsing="false" onAction="#modificarCasa" prefHeight="25.0" prefWidth="67.0" text="Modificar" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
-                  <Button fx:id="btnEliminar" mnemonicParsing="false" onAction="#eliminarCasa" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
+                  <Button fx:id="btnEliminar" disable="true" mnemonicParsing="false" onAction="#eliminarCasa" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
                   <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#limpiarCasa" prefHeight="25.0" prefWidth="67.0" text="Limpiar" />
                </children>
             </HBox>

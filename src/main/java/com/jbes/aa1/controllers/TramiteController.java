@@ -1,5 +1,6 @@
 package com.jbes.aa1.controllers;
 
+
 import com.jbes.aa1.model.Tramite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -9,12 +10,18 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import com.jbes.aa1.util.Ficheros;
 
-
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import static com.jbes.aa1.util.Ficheros.CASAS_DAT;
+import static com.jbes.aa1.util.Ficheros.TRAMITES_DAT;
+
 
 public class TramiteController implements Initializable {
 
@@ -65,6 +72,19 @@ public class TramiteController implements Initializable {
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        if (new File(TRAMITES_DAT).exists()) {
+            ArrayList<Tramite> tramiteGuardado = Ficheros.cargar(TRAMITES_DAT, lblBarraEstado);
+            if (tramiteGuardado == null) {
+                lblBarraEstado.setText("Se ha producido un error al cargar los datos.");
+            } else {
+                listaTramites.addAll(tramiteGuardado);
+            }
+        }
+
+        listaTramitesFiltrada = new FilteredList<>(listaTramites, Predicate -> true);
+        tableTramite.setItems(listaTramitesFiltrada);
+
         cbCitaFijada.getItems().addAll("Sí", "No");
 
         colTipo.setCellValueFactory(new PropertyValueFactory<>("tipo"));
@@ -73,8 +93,17 @@ public class TramiteController implements Initializable {
         colCitaFijada.setCellValueFactory(new PropertyValueFactory<>("tieneCita"));
         colFechaCita.setCellValueFactory(new PropertyValueFactory<>("fechaCita"));
 
-        listaTramitesFiltrada = new FilteredList<>(listaTramites, Predicate -> true);
-        tableTramite.setItems(listaTramitesFiltrada);
+        colCoste.setCellFactory(col -> new TableCell<Tramite, Float>() {
+            @Override
+            protected void updateItem(Float item, boolean empty) {
+                super.updateItem(item, empty);
+                if (empty || item == null || item == -1.0f) {
+                    setText(null);
+                } else {
+                    setText(String.valueOf(item));
+                }
+            }
+        });
 
         lblBarraEstado.setText("Sistema iniciado, por favor, haga su búsqueda.");
 
@@ -175,9 +204,9 @@ public class TramiteController implements Initializable {
         if (validadorCamposObligatorios()) {
             String tipo = txtTipo.getText();
             String veterinaria = txtVeterinaria.getText();
-            float coste = 0;
+            float coste = -1.0f;
             if (!txtCoste.getText().trim().isEmpty()) {
-                Float.parseFloat(txtCoste.getText().replace(",", "."));
+                coste = Float.parseFloat(txtCoste.getText().replace(",", "."));
             }
             String citaFijada = cbCitaFijada.getValue();
             boolean tieneCita = false;
@@ -192,6 +221,8 @@ public class TramiteController implements Initializable {
 
             lblBarraEstado.setText("El trámite " + tipo + " ha sido añadido correctamente.");
 
+            Ficheros.guardar(listaTramites, TRAMITES_DAT, lblBarraEstado);
+
             limpiarTramite();
         }
     }
@@ -203,6 +234,12 @@ public class TramiteController implements Initializable {
         txtCoste.clear();
         cbCitaFijada.setValue(null);
         dpFechaCita.setValue(null);
+
+        tableTramite.getSelectionModel().clearSelection();
+        btnAnadir.setDisable(false);
+        btnBuscar.setDisable(false);
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
     }
 
     @FXML
@@ -212,9 +249,14 @@ public class TramiteController implements Initializable {
         if (tramiteCargar != null) {
             txtTipo.setText(tramiteCargar.getTipo());
             txtVeterinaria.setText(String.valueOf(tramiteCargar.getVeterinaria()));
-            txtCoste.setText(String.valueOf(tramiteCargar.getCoste()));
+            txtCoste.setText(tramiteCargar.getCoste() == -1.0f ? "" : String.valueOf(tramiteCargar.getCoste()));
             cbCitaFijada.setValue(tramiteCargar.isTieneCita() ? "Sí" : "No");
             dpFechaCita.setValue(tramiteCargar.getFechaCita());
+
+            btnAnadir.setDisable(true);
+            btnBuscar.setDisable(true);
+            btnEliminar.setDisable(false);
+            btnModificar.setDisable(false);
         }
 
         lblBarraEstado.setText((tramiteCargar.getTipo()) + " ha sido seleccionado/a");
@@ -230,24 +272,39 @@ public class TramiteController implements Initializable {
         }
 
         lblBarraEstado.setText((tramiteCargar.getTipo()) + " ha sido eliminado/a de la lista.");
+
+        Ficheros.guardar(listaTramites, TRAMITES_DAT, lblBarraEstado);
     }
 
     @FXML
     protected void modificarTramite() {
         Tramite tramiteCargar = tableTramite.getSelectionModel().getSelectedItem();
 
-        if (tramiteCargar != null) {
-            tramiteCargar.setTipo(txtTipo.getText());
-            tramiteCargar.setVeterinaria(txtVeterinaria.getText());
-            tramiteCargar.setCoste(Float.parseFloat(txtCoste.getText().replace(",",".")));
-            tramiteCargar.setTieneCita("Al día".equals(cbCitaFijada.getValue()));
-            tramiteCargar.setFechaCita(dpFechaCita.getValue());
+        if (validadorCamposObligatorios()) {
+            if (tramiteCargar != null) {
 
-            tableTramite.refresh();
-            limpiarTramite();
+                float coste = -1.0f;
+                if (!txtCoste.getText().trim().isEmpty()) {
+                    coste = Float.parseFloat(txtCoste.getText().replace(",", "."));
+                }
+                tramiteCargar.setTipo(txtTipo.getText());
+                tramiteCargar.setVeterinaria(txtVeterinaria.getText());
+                tramiteCargar.setCoste(coste);
+                tramiteCargar.setTieneCita("Sí".equals(cbCitaFijada.getValue()));
+                tramiteCargar.setFechaCita(dpFechaCita.getValue());
+
+                tableTramite.refresh();
+                limpiarTramite();
+
+                lblBarraEstado.setText("El trámite " + (tramiteCargar.getTipo()) + " ha sido modificado.");
+
+                Ficheros.guardar(listaTramites, TRAMITES_DAT, lblBarraEstado);
+            }
+
+
         }
 
-        lblBarraEstado.setText("El trámite " + (tramiteCargar.getTipo()) + " ha sido modificado.");
+
     }
 
     @FXML

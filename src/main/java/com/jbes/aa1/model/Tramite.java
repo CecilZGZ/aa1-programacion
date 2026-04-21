@@ -1,8 +1,9 @@
 package com.jbes.aa1.model;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Tramite {
+public class Tramite implements Serializable{
     private String tipo; //Obligatorio
     private String veterinaria;
     private float coste;
