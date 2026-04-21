@@ -269,7 +269,6 @@ public class GatoController implements Initializable {
             txtNombre.setText(gatoCargar.getNombre());
             txtChip.setText(gatoCargar.getChip() == -1 ? "" : String.valueOf(gatoCargar.getChip()));
             txtPeso.setText(gatoCargar.getPeso() == -1.0f ? "" : String.valueOf(gatoCargar.getPeso()));
-            cbVacunacion.setValue(gatoCargar.getVacunado() ? "Al día" : "Pendiente");
             if (gatoCargar.getVacunado() == null) {
                 cbVacunacion.setValue(null);
             } else {
