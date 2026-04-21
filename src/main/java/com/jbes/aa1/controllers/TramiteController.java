@@ -1,6 +1,7 @@
 package com.jbes.aa1.controllers;
 
 
+import com.jbes.aa1.model.Gato;
 import com.jbes.aa1.model.Tramite;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,8 +20,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
-import static com.jbes.aa1.util.Ficheros.CASAS_DAT;
-import static com.jbes.aa1.util.Ficheros.TRAMITES_DAT;
+import static com.jbes.aa1.util.Ficheros.*;
 
 
 public class TramiteController implements Initializable {
@@ -46,6 +46,8 @@ public class TramiteController implements Initializable {
     private Button btnEliminar;
     @FXML
     private Button btnLimpiar;
+    @FXML
+    private Button btnDeshacer;
 
 
     @FXML
@@ -67,6 +69,8 @@ public class TramiteController implements Initializable {
     private ObservableList<Tramite> listaTramites = FXCollections.observableArrayList();
 
     private FilteredList<Tramite> listaTramitesFiltrada;
+
+    private Tramite ultimoTramiteBorrado = null;
 
 
 
@@ -267,11 +271,14 @@ public class TramiteController implements Initializable {
         Tramite tramiteCargar = tableTramite.getSelectionModel().getSelectedItem();
 
         if (tramiteCargar != null) {
+            ultimoTramiteBorrado = tramiteCargar;
             listaTramites.remove(tramiteCargar);
             limpiarTramite();
         }
 
         lblBarraEstado.setText((tramiteCargar.getTipo()) + " ha sido eliminado/a de la lista.");
+
+        btnDeshacer.setDisable(false);
 
         Ficheros.guardar(listaTramites, TRAMITES_DAT, lblBarraEstado);
     }
@@ -306,6 +313,22 @@ public class TramiteController implements Initializable {
 
 
     }
+
+    @FXML
+    protected void deshacerGato() {
+        if (ultimoTramiteBorrado != null) {
+
+            listaTramites.add(ultimoTramiteBorrado);
+            Ficheros.guardar(listaTramites, TRAMITES_DAT, lblBarraEstado);
+
+            lblBarraEstado.setText("Operación deshecha: Trámite recuperado.");
+
+            ultimoTramiteBorrado = null;
+
+            btnDeshacer.setDisable(true);
+        }
+    }
+
 
     @FXML
     protected boolean validadorCamposObligatorios() {

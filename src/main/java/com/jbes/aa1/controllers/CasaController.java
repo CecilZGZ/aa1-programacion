@@ -1,6 +1,7 @@
 package com.jbes.aa1.controllers;
 
 import com.jbes.aa1.model.Casa;
+import com.jbes.aa1.model.Gato;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -20,6 +21,7 @@ import java.util.ArrayList;
 import java.util.ResourceBundle;
 
 import static com.jbes.aa1.util.Ficheros.CASAS_DAT;
+import static com.jbes.aa1.util.Ficheros.GATOS_DAT;
 
 public class CasaController implements Initializable {
 
@@ -44,6 +46,8 @@ public class CasaController implements Initializable {
     private Button btnEliminar;
     @FXML
     private Button btnLimpiar;
+    @FXML
+    private Button btnDeshacer;
 
 
     @FXML
@@ -65,6 +69,8 @@ public class CasaController implements Initializable {
     private ObservableList<Casa> listaCasas = FXCollections.observableArrayList();
 
     private FilteredList<Casa> listaCasasFiltrada;
+
+    private Casa ultimaCasaBorrada = null;
 
 
 
@@ -282,11 +288,14 @@ public class CasaController implements Initializable {
         Casa casaCargar = tableCasa.getSelectionModel().getSelectedItem();
 
         if (casaCargar != null) {
+            ultimaCasaBorrada = casaCargar;
             listaCasas.remove(casaCargar);
             limpiarCasa();
         }
 
         lblBarraEstado.setText("La casa de " + (casaCargar.getDueno()) + " ha sido eliminada de la lista.");
+
+        btnDeshacer.setDisable(false);
 
         Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
     }
@@ -318,6 +327,21 @@ public class CasaController implements Initializable {
 
                 Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
             }
+        }
+    }
+
+    @FXML
+    protected void deshacerGato() {
+        if (ultimaCasaBorrada != null) {
+
+            listaCasas.add(ultimaCasaBorrada);
+            Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
+
+            lblBarraEstado.setText("Operación deshecha: Casa recuperado.");
+
+            ultimaCasaBorrada = null;
+
+            btnDeshacer.setDisable(true);
         }
     }
 
