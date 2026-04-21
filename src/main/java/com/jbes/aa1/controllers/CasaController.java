@@ -9,12 +9,17 @@ import javafx.fxml.Initializable;
 import javafx.scene.control.*;
 import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
+import com.jbes.aa1.util.Ficheros;
 
 
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
+
+import static com.jbes.aa1.util.Ficheros.CASAS_DAT;
 
 public class CasaController implements Initializable {
 
@@ -65,6 +70,18 @@ public class CasaController implements Initializable {
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
+        if (new File(CASAS_DAT).exists()) {
+            ArrayList<Casa> casaGuardado = Ficheros.cargar(CASAS_DAT, lblBarraEstado);
+            if (casaGuardado == null) {
+                lblBarraEstado.setText("Se ha producido un error al cargar los datos.");
+            } else {
+                listaCasas.addAll(casaGuardado);
+            }
+        }
+
+        listaCasasFiltrada = new FilteredList<>(listaCasas, Predicate -> true);
+        tableCasa.setItems(listaCasasFiltrada);
+
         cbHueco.getItems().addAll("Sí", "No");
 
 
@@ -98,8 +115,7 @@ public class CasaController implements Initializable {
             }
         });
 
-        listaCasasFiltrada = new FilteredList<>(listaCasas, Predicate -> true);
-        tableCasa.setItems(listaCasasFiltrada);
+
 
         lblBarraEstado.setText("Sistema iniciado, por favor, haga su búsqueda.");
 
@@ -201,11 +217,11 @@ public class CasaController implements Initializable {
             String dueno = txtDueno.getText();
             int numeroGatos = -1;
             if (!txtGatos.getText().trim().isEmpty()) {
-                Integer.parseInt(txtGatos.getText());
+                numeroGatos = Integer.parseInt(txtGatos.getText());
             }
             float valoracion = -1.0f;
             if (!txtValoracion.getText().trim().isEmpty()) {
-                Float.parseFloat(txtValoracion.getText().replace(",", "."));
+                valoracion = Float.parseFloat(txtValoracion.getText().replace(",", "."));
             }
             String huecos = cbHueco.getValue();
             boolean huecoDisponible = false;
@@ -220,6 +236,8 @@ public class CasaController implements Initializable {
 
             lblBarraEstado.setText("La casa de " + dueno + " ha sido añadida correctamente.");
 
+            Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
+
             limpiarCasa();
         }
     }
@@ -231,6 +249,12 @@ public class CasaController implements Initializable {
         txtValoracion.clear();
         cbHueco.setValue(null);
         dpFechaInscripcion.setValue(null);
+
+        tableCasa.getSelectionModel().clearSelection();
+        btnAnadir.setDisable(false);
+        btnBuscar.setDisable(false);
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
     }
 
     @FXML
@@ -243,6 +267,11 @@ public class CasaController implements Initializable {
             txtValoracion.setText(casaCargar.getValoracion() == -1.0f ? "" : String.valueOf(casaCargar.getValoracion()));
             cbHueco.setValue(casaCargar.isHuecoDisponible() ? "Sí" : "No");
             dpFechaInscripcion.setValue(casaCargar.getFechaInscripcion());
+
+            btnAnadir.setDisable(true);
+            btnBuscar.setDisable(true);
+            btnEliminar.setDisable(false);
+            btnModificar.setDisable(false);
         }
 
         lblBarraEstado.setText("La casa de " + (casaCargar.getDueno()) + " ha sido seleccionada.");
@@ -258,6 +287,8 @@ public class CasaController implements Initializable {
         }
 
         lblBarraEstado.setText("La casa de " + (casaCargar.getDueno()) + " ha sido eliminada de la lista.");
+
+        Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
     }
 
     @FXML
@@ -284,6 +315,8 @@ public class CasaController implements Initializable {
                 limpiarCasa();
 
                 lblBarraEstado.setText("Los datos de la casa de " + (casaCargar.getDueno()) + " han sido modificados.");
+
+                Ficheros.guardar(listaCasas, CASAS_DAT, lblBarraEstado);
             }
         }
     }

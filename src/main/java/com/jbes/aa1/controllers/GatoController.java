@@ -1,7 +1,8 @@
 package com.jbes.aa1.controllers;
 
-import com.jbes.aa1.model.Casa;
+
 import com.jbes.aa1.model.Gato;
+import com.jbes.aa1.util.Ficheros;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.transformation.FilteredList;
@@ -12,11 +13,16 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 
 
+
+import java.io.File;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.ResourceBundle;
-import java.util.concurrent.LinkedBlockingDeque;
+
+
+import static com.jbes.aa1.util.Ficheros.GATOS_DAT;
 
 public class GatoController implements Initializable {
 
@@ -67,6 +73,19 @@ public class GatoController implements Initializable {
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
+        if (new File(GATOS_DAT).exists()) {
+            ArrayList<Gato> gatoGuardado = Ficheros.cargar(GATOS_DAT, lblBarraEstado);
+            if (gatoGuardado == null) {
+                lblBarraEstado.setText("Se ha producido un error al cargar los datos.");
+            } else {
+                listaGatos.addAll(gatoGuardado);
+            }
+        }
+
+        listaGatosFiltrada = new FilteredList<>(listaGatos, Predicate -> true);
+        tableGato.setItems(listaGatosFiltrada);
+
         cbVacunacion.getItems().addAll("Al día", "Pendiente");
 
         colNombre.setCellValueFactory(new PropertyValueFactory<>("nombre"));
@@ -99,8 +118,6 @@ public class GatoController implements Initializable {
             }
         });
 
-        listaGatosFiltrada = new FilteredList<>(listaGatos, Predicate -> true);
-        tableGato.setItems(listaGatosFiltrada);
 
         lblBarraEstado.setText("Sistema iniciado, por favor, haga su búsqueda.");
 
@@ -223,6 +240,8 @@ public class GatoController implements Initializable {
             lblBarraEstado.setText("El gato/a " + nombre + " ha sido añadido/a correctamente.");
 
             limpiarGato();
+
+            Ficheros.guardar(listaGatos, GATOS_DAT, lblBarraEstado);
         }
     }
 
@@ -233,6 +252,12 @@ public class GatoController implements Initializable {
         txtPeso.clear();
         cbVacunacion.setValue(null);
         dpFechaNacimiento.setValue(null);
+
+        tableGato.getSelectionModel().clearSelection();
+        btnAnadir.setDisable(false);
+        btnBuscar.setDisable(false);
+        btnModificar.setDisable(true);
+        btnEliminar.setDisable(true);
 
     }
 
@@ -251,6 +276,11 @@ public class GatoController implements Initializable {
                 cbVacunacion.setValue(gatoCargar.getVacunado() ? "Al día" : "Pendiente");
             }
             dpFechaNacimiento.setValue(gatoCargar.getFechaNacimiento());
+
+            btnAnadir.setDisable(true);
+            btnBuscar.setDisable(true);
+            btnEliminar.setDisable(false);
+            btnModificar.setDisable(false);
         }
 
         lblBarraEstado.setText((gatoCargar.getNombre()) + " ha sido seleccionado/a");
@@ -266,6 +296,8 @@ public class GatoController implements Initializable {
         }
 
         lblBarraEstado.setText((gatoCargar.getNombre()) + " ha sido eliminado/a de la lista.");
+
+        Ficheros.guardar(listaGatos, GATOS_DAT, lblBarraEstado);
     }
 
     @FXML
@@ -293,6 +325,8 @@ public class GatoController implements Initializable {
                 limpiarGato();
 
                 lblBarraEstado.setText("Los datos de " + (gatoCargar.getNombre()) + " han sido modificados.");
+
+                Ficheros.guardar(listaGatos, GATOS_DAT, lblBarraEstado);
             }
         }
 

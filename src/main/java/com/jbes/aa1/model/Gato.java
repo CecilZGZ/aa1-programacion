@@ -2,8 +2,9 @@ package com.jbes.aa1.model;
 
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Gato {
+public class Gato implements Serializable {
     private String nombre; //Obligatorio
     private int chip; //Obligatorio
     private float peso;

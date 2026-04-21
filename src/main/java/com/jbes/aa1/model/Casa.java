@@ -1,8 +1,9 @@
 package com.jbes.aa1.model;
 
 import java.time.LocalDate;
+import java.io.Serializable;
 
-public class Casa {
+public class Casa implements Serializable{
     private String dueno; //Obligatorio
     private int numeroGatos;
     private float valoracion;
