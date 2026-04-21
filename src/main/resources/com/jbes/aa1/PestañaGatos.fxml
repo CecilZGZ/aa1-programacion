@@ -13,7 +13,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jbes.aa1.controllers.GatoController">
+<BorderPane maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="-Infinity" minWidth="-Infinity" prefHeight="776.0" prefWidth="909.0" xmlns="http://javafx.com/javafx/25" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.jbes.aa1.controllers.GatoController">
    <center>
       <TableView fx:id="tableGato" maxHeight="1.7976931348623157E308" onMouseClicked="#cargarGato" prefHeight="405.0" prefWidth="459.0" BorderPane.alignment="CENTER">
         <columns>
@@ -72,6 +72,12 @@
                <children>
                   <Button fx:id="btnEliminar" disable="true" mnemonicParsing="false" onAction="#eliminarGato" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
                   <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#limpiarGato" prefHeight="25.0" prefWidth="67.0" text="Limpiar" />
+               </children>
+            </HBox>
+            <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
+               <children>
+                  <Button fx:id="btnExportar" mnemonicParsing="false" onAction="#exportarBackup" prefHeight="25.0" prefWidth="67.0" text="Exportar" />
+                  <Button fx:id="btnImportar" mnemonicParsing="false" onAction="#importarBackup" prefHeight="25.0" prefWidth="67.0" text="Importar" />
                </children>
             </HBox>
          </children>

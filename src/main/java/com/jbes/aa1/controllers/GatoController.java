@@ -13,8 +13,7 @@ import javafx.scene.control.cell.PropertyValueFactory;
 import javafx.util.StringConverter;
 
 
-
-import java.io.File;
+import java.io.*;
 import java.net.URL;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -351,6 +350,76 @@ public class GatoController implements Initializable {
         } else {
             lblBarraEstado.setText(mensajeError);
             return false;
+        }
+    }
+
+    @FXML
+    protected void exportarBackup() {
+        FileWriter fichero = null;
+        PrintWriter escritor = null;
+
+        try {
+            fichero = new FileWriter("backup.csv");
+            escritor = new PrintWriter(fichero);
+            escritor.write("Nombre;Chip;Peso;Vacunado;FechaNacimiento\n");
+            for (Gato gato : listaGatos) {
+                escritor.write(gato.getNombre() + ";" + gato.getChip() + ";" + gato.getPeso() + ";" + gato.getVacunado() + ";" + gato.getFechaNacimiento() + "\n");
+            }
+
+            escritor.close();
+            lblBarraEstado.setText("Back-up exportado exitosamente.");
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (fichero != null)
+                try {
+                    fichero.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
+        }
+    }
+
+    @FXML
+    protected void importarBackup() {
+        File fichero = null;
+        FileReader lector = null;
+        BufferedReader buffer = null;
+
+        try {
+            buffer = new BufferedReader(new FileReader(new File("backup.csv")));
+            listaGatos.clear();
+
+            String linea = null;
+            boolean primeraLinea = true;
+            while ((linea = buffer.readLine()) != null) {
+                if (primeraLinea) {
+                    primeraLinea = false;
+                    continue;
+                }
+                String[] datos = linea.split(";");
+
+                if (datos.length >= 5) {
+                    String nombre = datos[0];
+                    int chip = Integer.parseInt(datos[1]);
+                    float peso = Float.parseFloat(datos[2]);
+                    Boolean vacunado = datos[3].equals("null") ? null : Boolean.parseBoolean(datos[3]);
+                    LocalDate fechaNacimiento = datos[4].equals("null") ? null : LocalDate.parse(datos[4]);
+
+                    listaGatos.add(new Gato(nombre, chip, peso, vacunado, fechaNacimiento));
+                }
+            }
+        } catch (FileNotFoundException fnfe) {
+            fnfe.printStackTrace();
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        } finally {
+            if (buffer != null)
+                try {
+                    buffer.close();
+                } catch (IOException ioe) {
+                    ioe.printStackTrace();
+                }
         }
     }
 
