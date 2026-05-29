@@ -46,6 +46,8 @@ public class GatoController implements Initializable {
     private Button btnEliminar;
     @FXML
     private Button btnLimpiar;
+    @FXML
+    private Button btnDeshacer;
 
 
     @FXML
@@ -68,10 +70,13 @@ public class GatoController implements Initializable {
 
     private FilteredList<Gato> listaGatosFiltrada;
 
+    private Gato ultimoGatoBorrado = null;
+
 
 
     @FXML
     public void initialize(URL url, ResourceBundle resourceBundle) {
+
 
         if (new File(GATOS_DAT).exists()) {
             ArrayList<Gato> gatoGuardado = Ficheros.cargar(GATOS_DAT, lblBarraEstado);
@@ -289,11 +294,15 @@ public class GatoController implements Initializable {
         Gato gatoCargar = tableGato.getSelectionModel().getSelectedItem();
 
         if (gatoCargar != null) {
+            ultimoGatoBorrado = gatoCargar;
+
             listaGatos.remove(gatoCargar);
             limpiarGato();
         }
 
         lblBarraEstado.setText((gatoCargar.getNombre()) + " ha sido eliminado/a de la lista.");
+
+        btnDeshacer.setDisable(false);
 
         Ficheros.guardar(listaGatos, GATOS_DAT, lblBarraEstado);
     }
@@ -345,11 +354,34 @@ public class GatoController implements Initializable {
             mensajeError += "El número de chip debe ser un número entero válido.";
         }
 
+        if (!txtPeso.getText().trim().isEmpty()) {
+            try {
+                Float.parseFloat(txtPeso.getText().replace(",", "."));
+            } catch (NumberFormatException e) {
+                mensajeError += "El peso debe ser un número decimal. ";
+            }
+        }
+
         if (mensajeError.isEmpty()) {
             return true;
         } else {
             lblBarraEstado.setText(mensajeError);
             return false;
+        }
+    }
+
+    @FXML
+    protected void deshacerGato() {
+        if (ultimoGatoBorrado != null) {
+
+            listaGatos.add(ultimoGatoBorrado);
+            Ficheros.guardar(listaGatos, GATOS_DAT, lblBarraEstado);
+
+            lblBarraEstado.setText("Operación deshecha: Gato recuperado.");
+
+            ultimoGatoBorrado = null;
+
+            btnDeshacer.setDisable(true);
         }
     }
 

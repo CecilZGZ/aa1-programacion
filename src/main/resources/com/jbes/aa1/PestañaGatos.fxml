@@ -57,6 +57,7 @@
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnBuscar" mnemonicParsing="false" onAction="#buscarGato" prefHeight="25.0" prefWidth="67.0" text="Buscar" />
+                  <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#limpiarGato" prefHeight="25.0" prefWidth="67.0" text="Limpiar" />
                </children>
                <VBox.margin>
                   <Insets bottom="10.0" top="10.0" />
@@ -71,7 +72,7 @@
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnEliminar" disable="true" mnemonicParsing="false" onAction="#eliminarGato" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
-                  <Button fx:id="btnLimpiar" mnemonicParsing="false" onAction="#limpiarGato" prefHeight="25.0" prefWidth="67.0" text="Limpiar" />
+                  <Button fx:id="btnDeshacer" disable="true" mnemonicParsing="false" onAction="#deshacerGato" prefHeight="25.0" prefWidth="67.0" text="Deshacer" />
                </children>
             </HBox>
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
