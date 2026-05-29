@@ -331,7 +331,7 @@ public class CasaController implements Initializable {
     }
 
     @FXML
-    protected void deshacerGato() {
+    protected void deshacerCasa() {
         if (ultimaCasaBorrada != null) {
 
             listaCasas.add(ultimaCasaBorrada);
@@ -350,6 +350,16 @@ public class CasaController implements Initializable {
         String mensajeError = "";
         if (txtDueno.getText() == null || txtDueno.getText().trim().isEmpty()) {
             mensajeError += "Es obligatorio indicar el dueño de la casa. ";
+        }
+        if (!txtValoracion.getText().trim().isEmpty()) {
+            try {
+                float puntos = Float.parseFloat(txtValoracion.getText().replace("," , "."));
+                if (puntos < 0 || puntos > 10)  {
+                    mensajeError += "La valoración ha de comprenderse entre 0 y 10.";
+                }
+            } catch (NumberFormatException e) {
+                mensajeError += "La valoración debe ser un número.";
+            }
         }
         if (cbHueco.getValue() == null) {
             mensajeError += "Hay que seleccionar si hay hueco disponible.";

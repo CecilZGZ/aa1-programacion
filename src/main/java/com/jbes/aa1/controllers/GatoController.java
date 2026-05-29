@@ -354,6 +354,14 @@ public class GatoController implements Initializable {
             mensajeError += "El número de chip debe ser un número entero válido.";
         }
 
+        if (!txtPeso.getText().trim().isEmpty()) {
+            try {
+                Float.parseFloat(txtPeso.getText().replace(",", "."));
+            } catch (NumberFormatException e) {
+                mensajeError += "El peso debe ser un número decimal. ";
+            }
+        }
+
         if (mensajeError.isEmpty()) {
             return true;
         } else {

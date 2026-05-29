@@ -72,7 +72,7 @@
             <HBox alignment="CENTER" prefHeight="55.0" prefWidth="126.0" spacing="10.0">
                <children>
                   <Button fx:id="btnEliminar" disable="true" mnemonicParsing="false" onAction="#eliminarTramite" prefHeight="25.0" prefWidth="67.0" text="Eliminar" />
-                  <Button fx:id="btnDeshacer" disable="true" mnemonicParsing="false" onAction="#deshacerGato" prefHeight="25.0" prefWidth="67.0" text="Deshacer" />
+                  <Button fx:id="btnDeshacer" disable="true" mnemonicParsing="false" onAction="#deshacerTramite" prefHeight="25.0" prefWidth="67.0" text="Deshacer" />
                </children>
             </HBox>
          </children>

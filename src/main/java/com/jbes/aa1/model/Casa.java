@@ -11,14 +11,14 @@ public class Casa implements Serializable{
     private LocalDate fechaInscripcion;
 
 
-    public Casa(String dueño, boolean huecoDisponible) {
-        this.dueno = dueño;
+    public Casa(String dueno, boolean huecoDisponible) {
+        this.dueno = dueno;
         this.huecoDisponible = huecoDisponible;
     }
 
 
-    public Casa(String dueño, int numeroGatos, float valoracion, boolean huecoDisponible, LocalDate fechaInscripcion) {
-        this.dueno = dueño;
+    public Casa(String dueno, int numeroGatos, float valoracion, boolean huecoDisponible, LocalDate fechaInscripcion) {
+        this.dueno = dueno;
         this.numeroGatos = numeroGatos;
         this.valoracion = valoracion;
         this.huecoDisponible = huecoDisponible;

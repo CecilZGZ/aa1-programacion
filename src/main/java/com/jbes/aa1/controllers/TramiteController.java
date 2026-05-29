@@ -315,7 +315,7 @@ public class TramiteController implements Initializable {
     }
 
     @FXML
-    protected void deshacerGato() {
+    protected void deshacerTramite() {
         if (ultimoTramiteBorrado != null) {
 
             listaTramites.add(ultimoTramiteBorrado);
@@ -335,6 +335,13 @@ public class TramiteController implements Initializable {
         String mensajeError = "";
         if (txtTipo.getText() == null || txtTipo.getText().trim().isEmpty()) {
             mensajeError += "Es obligatorio introducir un trámite. ";
+        }
+        if (!txtCoste.getText().trim().isEmpty()) {
+            try {
+                Float.parseFloat(txtCoste.getText().replace("," , "."));
+            } catch (NumberFormatException e) {
+                mensajeError += "El peso debe ser un número decimal.";
+            }
         }
         if (cbCitaFijada.getValue() == null) {
             mensajeError += "Es obligatorio indicar si existe una cita fijada.";
